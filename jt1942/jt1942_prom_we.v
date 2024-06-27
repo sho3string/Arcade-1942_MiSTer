@@ -46,7 +46,8 @@ always @(posedge clk_rgb) begin
     end
 end
 
-always @(posedge clk_rom) begin
+//always @(posedge clk_rom) begin
+always  @(negedge clk_rom) begin
     if( set_done ) set_strobe <= 1'b0;
     if ( ioctl_wr ) begin
         prog_we   <= 1'b1;

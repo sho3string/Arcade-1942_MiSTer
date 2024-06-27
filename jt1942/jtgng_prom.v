@@ -67,7 +67,8 @@ initial begin
 end
 `endif
 
-always @(posedge clk) begin
+always @(negedge clk) begin
+//always @(posedge clk) begin
     if( !cen_rd || cen ) q <= mem[rd_addr];
     if( we) mem[wr_addr] <= data; // no clock enable for writtings to allow correct operation during SPI downloading.
 end

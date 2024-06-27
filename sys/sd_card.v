@@ -109,25 +109,27 @@ wire [7:0] buffer_dout;
 wire [7:0] config_dout;
 reg        buffer_wr;
 
+reg [2:0] read_state;
+reg [2:0] write_state;
+reg [6:0] sbuf;
+reg       cmd55;
+reg [7:0] cmd;
+reg [2:0] bit_cnt;
+reg [3:0] byte_cnt;
+reg [7:0] reply;
+reg [7:0] reply0, reply1, reply2, reply3;
+reg [3:0] reply_len;
+reg       tx_finish;
+reg       rx_finish;
+reg       old_sck;
+reg       synced;
+reg [5:0] ack;
+reg       io_ack;
+reg [4:0] idle_cnt = 0;
+reg [2:0] wait_m_cnt;
+
 always @(posedge clk_spi) begin
-	reg [2:0] read_state;
-	reg [2:0] write_state;
-	reg [6:0] sbuf;
-	reg       cmd55;
-	reg [7:0] cmd;
-	reg [2:0] bit_cnt;
-	reg [3:0] byte_cnt;
-	reg [7:0] reply;
-	reg [7:0] reply0, reply1, reply2, reply3;
-	reg [3:0] reply_len;
-	reg       tx_finish;
-	reg       rx_finish;
-	reg       old_sck;
-	reg       synced;
-	reg [5:0] ack;
-	reg       io_ack;
-	reg [4:0] idle_cnt = 0;
-	reg [2:0] wait_m_cnt;
+	
 
 	if(buffer_wr & ~&buffer_ptr) buffer_ptr <= buffer_ptr + 1'd1;
 	buffer_wr <= 0;

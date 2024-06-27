@@ -20,6 +20,7 @@
 
 module jt1942_main(
     input              clk, 
+    input              clk_rom,
     input              cen6,   // 6MHz
     input              cen3    /* synthesis direct_enable = 1 */,   // 3MHz
     input              rst,

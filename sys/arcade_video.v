@@ -47,6 +47,19 @@ reg [aw-1:0] addr_in, addr_out;
 reg we_in;
 reg buff = 0;
 
+
+dualport_2clk_ram #(.ADDR_WIDTH(aw),.DATA_WIDTH(DEPTH),.MAXIMUM_SIZE(memsize)) ram
+(
+		.clock_a(clk),
+		.address_a(addr_in),
+		.data_a(video_in),
+		.wren_a(en_we),
+
+		.clock_b(clk),
+		.address_b(addr_out),
+		.q_b(out)
+);
+/*	
 rram #(aw, DEPTH, memsize) ram
 (
 	.wrclock(clk),
@@ -57,7 +70,7 @@ rram #(aw, DEPTH, memsize) ram
 	.rdclock(clk),
 	.rdaddress(addr_out),
 	.q(out)
-);
+);*/
 
 wire [DEPTH-1:0] out; 
 reg  [DEPTH-1:0] vout;
@@ -70,10 +83,10 @@ wire en_y = (ypos<HEIGHT);
 integer xpos, ypos;
 
 wire blank = hblank | vblank;
+reg old_blank, old_vblank;
+reg [aw-1:0] addr_row;
 always @(posedge clk) begin
-	reg old_blank, old_vblank;
-	reg [aw-1:0] addr_row;
-
+	
 	if(en_we) begin
 		addr_in <= CCW ? addr_in-HEIGHT[aw-1:0] : addr_in+HEIGHT[aw-1:0];
 		xpos <= xpos + 1;
@@ -102,13 +115,15 @@ always @(posedge clk) begin
 	end
 end
 
-always @(posedge clk) begin
-	reg old_buff;
-	reg hs;
-	reg ced;
+reg old_buff;
+reg hs;
+reg ced;
+integer vbcnt;
+integer xposo, yposo, xposd, yposd;
 
-	integer vbcnt;
-	integer xposo, yposo, xposd, yposd;
+always @(posedge clk) begin
+	
+	
 	
 	ced <= 0;
 	if(ce_out) begin
@@ -284,9 +299,10 @@ wire scandoubler = fx || forced_scandoubler;
 
 video_mixer #(WIDTH+4, 1) video_mixer
 (
-	.clk_sys(HDMI_CLK),
+	.CLK_VIDEO(HDMI_CLK),
 	.ce_pix(VGA_CE | ~scandoubler),
-	.ce_pix_out(HDMI_CE),
+	.CE_PIXEL(HDMI_CE),
+	//.ce_pix_out(HDMI_CE),
 
 	.scandoubler(scandoubler),
 	.hq2x(fx==1),
@@ -415,7 +431,7 @@ video_mixer #(WIDTH+4, 1) video_mixer
 endmodule
 
 //////////////////////////////////////////////////////////
-
+/*
 module rram #(parameter AW=16, DW=8, NW=1<<AW)
 (
 	input           wrclock,
@@ -476,3 +492,4 @@ defparam
 	altsyncram_component.width_byteena_a = 1;
 
 endmodule
+*/

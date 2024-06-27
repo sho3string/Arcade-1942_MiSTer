@@ -18,7 +18,8 @@
 
 module jtgng_rom(
     input               rst,
-    input               clk, 
+    input               clk,
+    input               clk_rom, 
     input               cen12, // 12 MHz
     input       [ 2:0]  H,
     input               Hsub,
@@ -78,7 +79,8 @@ wire  obj_rq = rd_state[2:0] == 3'b011;
 wire char_rq = rd_state == 4'd2;
 wire  scr_rq = rd_state[2:1] == 2'b11;
 
-always @(posedge clk) if(cen12) begin
+//always @(posedge clk) if(cen12) begin
+always @(negedge clk_rom) if(cen12) begin
     if( loop_rst || downloading )
         sdram_re <= 1'b0;   // start strobing before ready signal
             // because first data must be read before that signal.
@@ -92,7 +94,8 @@ end
 // 3, 11        obj
 // 6, 14, 7, 15 scr
 
-always @(posedge clk) 
+//always @(posedge clk) 
+always @(negedge clk_rom) 
 if( loop_rst || downloading ) begin
     //rd_state    <= { H,1'b1 };
     autorefresh <= 1'b0;
@@ -104,7 +107,8 @@ if( loop_rst || downloading ) begin
     scr_dout  <= 24'd0;
     ready_cnt <=  4'd0;    
     ready     <=  1'b0;
-end else if(cen12) begin
+end 
+else if(cen12) begin
     {ready, ready_cnt}  <= {ready_cnt, 1'b1};
     rd_state_last <= rd_state;
     // Get data from current read

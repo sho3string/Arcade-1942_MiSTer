@@ -164,6 +164,7 @@ wire prom_m11_we = prom_we[9];
 jt1942_main u_main(
     .rst        ( rst_game      ),
     .clk        ( clk           ),
+    .clk_rom    ( clk_rom       ),
     .cen6       ( cen6          ),
     .cen3       ( cen3          ),
     .char_wait_n( char_wait_n   ),
@@ -290,6 +291,7 @@ jtgng_rom #(
 ) u_rom (
     .rst         ( rst           ),
     .clk         ( clk           ),
+    .clk_rom     ( clk_rom       ),
     .cen12       ( cen12         ),
     .H           ( H[2:0]        ),
     .Hsub        ( Hsub          ),

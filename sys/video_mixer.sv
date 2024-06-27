@@ -41,9 +41,9 @@ module video_mixer
 	input            hq2x,
 
 	// color
-	input [DWIDTH:0] R,
-	input [DWIDTH:0] G,
-	input [DWIDTH:0] B,
+	input [DWIDTH:0] r,
+	input [DWIDTH:0] g,
+	input [DWIDTH:0] b,
 
 	// Monochrome mode (for HALF_DEPTH only)
 	input            mono,
@@ -72,14 +72,16 @@ wire hs_sd, vs_sd, hb_sd, vb_sd, ce_pix_sd;
 
 scandoubler #(.LENGTH(LINE_LENGTH), .HALF_DEPTH(HALF_DEPTH)) sd
 (
-	.*,
+    .clk_sys(clk_sys),
+    .ce_pix(ce_pix),
+	.hq2x(hq2x),
 	.hs_in(HSync),
 	.vs_in(VSync),
 	.hb_in(HBlank),
 	.vb_in(VBlank),
-	.r_in(R),
-	.g_in(G),
-	.b_in(B),
+	.r_in(r),
+	.g_in(g),
+	.b_in(b),
 
 	.ce_pix_out(ce_pix_sd),
 	.hs_out(hs_sd),
@@ -91,9 +93,9 @@ scandoubler #(.LENGTH(LINE_LENGTH), .HALF_DEPTH(HALF_DEPTH)) sd
 	.b_out(B_sd)
 );
 
-wire [DWIDTH:0] rt  = (scandoubler ? R_sd : R);
-wire [DWIDTH:0] gt  = (scandoubler ? G_sd : G);
-wire [DWIDTH:0] bt  = (scandoubler ? B_sd : B);
+wire [DWIDTH:0] rt  = (scandoubler ? R_sd : r);
+wire [DWIDTH:0] gt  = (scandoubler ? G_sd : g);
+wire [DWIDTH:0] bt  = (scandoubler ? B_sd : b);
 
 generate
 	if(HALF_DEPTH) begin
